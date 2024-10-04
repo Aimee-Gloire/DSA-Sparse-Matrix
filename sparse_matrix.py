@@ -85,8 +85,8 @@ class SparseMatrix:
                 file.write(f"({row}, {col}, {value})\n")
 
 def main():
-    input_path1 = os.path.join("inputs", "easy_sample_01_2.txt")
-    input_path2 = os.path.join("inputs", "easy_sample_01_3.txt")
+    input_path1 = os.path.join("inputs", "matrixfile1.txt")
+    input_path2 = os.path.join("inputs", "easy_sample_04_1.txt")
     try:
         matrix1 = SparseMatrix.load_from_file(input_path1)
         matrix2 = SparseMatrix.load_from_file(input_path2)
