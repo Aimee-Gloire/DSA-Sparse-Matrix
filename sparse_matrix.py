@@ -47,34 +47,40 @@ class SparseMatrix:
             self.elements[(row, col)] = value
 
     def add(self, other):
-        max_rows = max(self.rows, other.rows)
-        max_cols = max(self.cols, other.cols)
-        result = SparseMatrix(max_rows, max_cols)
+        if self.rows != other.rows or self.cols != other.cols:
+            raise ValueError("Matrices must have the same dimensions to be added")
+        
+        result = SparseMatrix(self.rows, self.cols)
         for (row, col), value in self.elements.items():
             result.add_element(row, col, value)
         for (row, col), value in other.elements.items():
             result.set_element(row, col, result.get_element(row, col) + value)
+        
         return result
 
     def subtract(self, other):
-        max_rows = max(self.rows, other.rows)
-        max_cols = max(self.cols, other.cols)
-        result = SparseMatrix(max_rows, max_cols)
+        if self.rows != other.rows or self.cols != other.cols:
+            raise ValueError("Matrices must have the same dimensions to be subtracted")
+        
+        result = SparseMatrix(self.rows, self.cols)
         for (row, col), value in self.elements.items():
             result.add_element(row, col, value)
         for (row, col), value in other.elements.items():
             result.set_element(row, col, result.get_element(row, col) - value)
+        
         return result
 
     def multiply(self, other):
         if self.cols != other.rows:
             raise ValueError("Matrix dimensions do not match for multiplication")
+        
         result = SparseMatrix(self.rows, other.cols)
         for (row1, col1), value1 in self.elements.items():
             for (row2, col2), value2 in other.elements.items():
                 if col1 == row2:
                     current_value = result.get_element(row1, col2)
                     result.set_element(row1, col2, current_value + value1 * value2)
+        
         return result
 
     def save_to_file(self, file_path):
