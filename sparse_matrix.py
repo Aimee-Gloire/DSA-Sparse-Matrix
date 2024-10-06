@@ -1,13 +1,10 @@
 import os
 
 class SparseMatrix:
-    def __init__(self, file_path=None, rows=None, cols=None):
-        if file_path:
-            self.load_from_file(file_path)
-        else:
-            self.rows = rows
-            self.cols = cols
-            self.elements = {}  # Using a dictionary for efficient access
+    def __init__(self, rows, cols):
+        self.rows = rows
+        self.cols = cols
+        self.elements = {}  # Using a dictionary for efficient access
 
     def add_element(self, row, col, value):
         if value != 0:
@@ -26,7 +23,7 @@ class SparseMatrix:
                 raise ValueError("Input file has wrong format")
             cols = int(line[5:])
 
-            matrix = SparseMatrix(rows=rows, cols=cols)
+            matrix = SparseMatrix(rows, cols)
             for line in file:
                 line = line.strip()
                 if line:
@@ -36,10 +33,7 @@ class SparseMatrix:
                     parts = line.split(',')
                     if len(parts) != 3:
                         raise ValueError("Input file has wrong format")
-                    try:
-                        row, col, value = map(int, map(str.strip, parts))
-                    except ValueError:
-                        raise ValueError("Input file has wrong format")
+                    row, col, value = map(int, map(str.strip, parts))
                     matrix.add_element(row, col, value)
         return matrix
 
@@ -55,7 +49,7 @@ class SparseMatrix:
     def add(self, other):
         max_rows = max(self.rows, other.rows)
         max_cols = max(self.cols, other.cols)
-        result = SparseMatrix(rows=max_rows, cols=max_cols)
+        result = SparseMatrix(max_rows, max_cols)
         for (row, col), value in self.elements.items():
             result.add_element(row, col, value)
         for (row, col), value in other.elements.items():
@@ -65,7 +59,7 @@ class SparseMatrix:
     def subtract(self, other):
         max_rows = max(self.rows, other.rows)
         max_cols = max(self.cols, other.cols)
-        result = SparseMatrix(rows=max_rows, cols=max_cols)
+        result = SparseMatrix(max_rows, max_cols)
         for (row, col), value in self.elements.items():
             result.add_element(row, col, value)
         for (row, col), value in other.elements.items():
@@ -75,7 +69,7 @@ class SparseMatrix:
     def multiply(self, other):
         if self.cols != other.rows:
             raise ValueError("Matrix dimensions do not match for multiplication")
-        result = SparseMatrix(rows=self.rows, cols=other.cols)
+        result = SparseMatrix(self.rows, other.cols)
         for (row1, col1), value1 in self.elements.items():
             for (row2, col2), value2 in other.elements.items():
                 if col1 == row2:
