@@ -1,17 +1,27 @@
 import os
 
 class SparseMatrix:
+
+    #initialiizng sparsematrix with a specified number of rows and columns
+
     def __init__(self, rows, cols):
         self.rows = rows
         self.cols = cols
-        self.elements = {}  # Using a dictionary for efficient access
+    # Using a dictionary to store non-zero elements for efficient access
+        self.elements = {} 
 
     def add_element(self, row, col, value):
+    #Adding a non-zero element on specified row and column of the sparsematrix
         if value != 0:
             self.elements[(row, col)] = value
 
     @staticmethod
     def load_from_file(file_path):
+        """
+        Load a sparse matrix from a file.
+        Reads and extract the dimensions and elements of the matrix
+        then returns an instance of the class
+        """
         with open(file_path, 'r') as file:
             line = file.readline().strip()
             if not line.startswith("rows="):
@@ -38,15 +48,28 @@ class SparseMatrix:
         return matrix
 
     def get_element(self, row, col):
+        """
+        Retrieves the value of an element in the sparsematrix.
+        Returns the value of the element, or 0 if it is not explicitly stored.
+        """
         return self.elements.get((row, col), 0)
 
     def set_element(self, row, col, value):
+        """
+        Sets the value of an element in the sparsematrix
+        Removes the element if the value is zero
+        else updates the element
+        """
         if value == 0:
             self.elements.pop((row, col), None)
         else:
             self.elements[(row, col)] = value
 
     def add(self, other):
+        """
+        function to add two matrices together
+        Returns new instance of the class holding the result of addition
+        """
         max_rows = max(self.rows, other.rows)
         max_cols = max(self.cols, other.cols)
         result = SparseMatrix(max_rows, max_cols)
@@ -57,6 +80,10 @@ class SparseMatrix:
         return result
 
     def subtract(self, other):
+        """
+        function to subtract one matrix from the other
+        Returns new instance of the class holding the result of the subtraction
+        """
         max_rows = max(self.rows, other.rows)
         max_cols = max(self.cols, other.cols)
         result = SparseMatrix(max_rows, max_cols)
@@ -67,6 +94,11 @@ class SparseMatrix:
         return result
 
     def multiply(self, other):
+        """
+        function to multiply two matrices together
+        Returns new instance of the class holding the result of multiplication
+        and raises a valueError if the matrices dimensions do not match
+        """
         if self.cols != other.rows:
             raise ValueError("Matrix dimensions do not match for multiplication")
         result = SparseMatrix(self.rows, other.cols)
@@ -78,6 +110,10 @@ class SparseMatrix:
         return result
 
     def save_to_file(self, file_path):
+        """
+        Save the sparsematrix to a file, writes the matrix dimensions 
+        and non-zero elements to the files
+        """
         with open(file_path, 'w') as file:
             file.write(f"rows={self.rows}\n")
             file.write(f"cols={self.cols}\n")
@@ -85,8 +121,15 @@ class SparseMatrix:
                 file.write(f"({row}, {col}, {value})\n")
 
 def main():
-    input_path1 = os.path.join("inputs", "test1.txt")
-    input_path2 = os.path.join("inputs", "test2.txt")
+
+    """
+    Main function for loading the matrices from input files,
+    allow user to select a preferred operation, call the function
+    for performing operations, and saving the result.
+    """
+
+    input_path1 = os.path.join("inputs", "matrixfile1.txt")
+    input_path2 = os.path.join("inputs", "easy_sample_04_1.txt")
     try:
         matrix1 = SparseMatrix.load_from_file(input_path1)
         matrix2 = SparseMatrix.load_from_file(input_path2)
